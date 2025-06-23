@@ -213,7 +213,9 @@ quoteInput.addEventListener("focus", function() {
 submitBtn.onclick = function() {
     if (quoteInput.value.trim() === quoteDisplay.textContent.trim()) {
         clearInterval(uniqueId);
-        result.textContent = "You typed in " + count + " seconds";
+        let quote = quoteDisplay.textContent.trim();
+        let wordCount = quote.split(/\s+/).length;
+        result.textContent = "You typed "+wordCount+ " words in "+count +" seconds";
     } else {
         result.textContent = "You typed incorrect sentence";
     }
