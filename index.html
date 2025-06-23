@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<style>
+     #speedTypingTest {
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to right, #f2ebfe, #c3aae8);
+    padding-left:100px;
+    padding-bottom:100px;
+}
+
+.heading {
+    font-weight: bold;
+    color: #690cb0;
+    text-align: flex-start;
+    font-size: 50px;
+    padding: 25px;
+}
+
+.content-div {
+    display: flex;
+    align-items: center;
+    min-height: 50vh;
+    width: 80%;
+    flex-direction: column;
+    border: 3px solid #dac0ff;
+    border-radius: 15px;
+    background-color: white;
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+#quoteDisplay {
+    color: #323f4b;
+    padding: 8px 15px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+#quoteInput {
+    border: 2px solid #dac0ff;
+    border-radius: 8px;
+    width: 85%;
+    height: 25vh;
+    font-size: 20px;
+
+}
+
+#result {
+    color: #3e4c59;
+    font-size: 25px;
+    margin-left: 35px;
+    margin-top: 20px;
+}
+
+.button-Div {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding-bottom: 50px;
+    margin-top:50px;
+}
+
+#submitBtn {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #690cb0;
+    padding: 4px 10px;
+    border: none;
+    margin-left: 35px;
+}
+
+#submitBtn:hover {
+    border: 2px solid orange;
+    outline: orange;
+}
+
+#resetBtn {
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: white;
+    padding: 5px 14px;
+    border: 1px solid black;
+}
+
+#resetBtn:hover {
+    border: 2px solid orange;
+    outline: orange;
+}
+
+#quoteInput:hover {
+    border: 2px solid orange;
+    outline: orange;
+}
+
+.img {
+    height: 10vh;
+    width: 9vw;
+}
+
+#timer {
+    font-size: 40px;
+    margin-left: 20px;
+    color: #3e4c59;
+}
+
+.timer-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 23px;
+}
+
+.para {
+    color: #3e4c59;
+    font-size: 20px;
+    padding-left: 25px;
+    padding-bottom:15px;
+}
+</style>
+<body>
+    <div id="speedTypingTest">
+        <h1 class="heading">Speed <br> Typing Test</h1>
+        <p class="para">On your fingers lets set Go!</p>
+        <div class="d-none" id="spinner">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div id="Reset-Div">
+            <div class="timer-div">
+                <img class="img" src="https://assets.ccbp.in/frontend/dynamic-webapps/clock-img.png" />
+                <p id="timer"></p>
+                <p style="font-size:20px;margin-left:5px;margin-top:14px;color:#3e4c59;">seconds</p>
+            </div>
+            <div class="content-div">
+                <p id="quoteDisplay"></p>
+                <textarea placeholder="   Type here!!" id="quoteInput"></textarea>
+            </div>
+        </div>
+        <p id="result"></p>
+        <div class="button-Div">
+            <button id="submitBtn">Submit</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+</body>
+<script>
+    let spinner = document.getElementById("spinner");
+let timer = document.getElementById("timer");
+let quoteDisplay = document.getElementById("quoteDisplay");
+
+let quoteInput = document.getElementById("quoteInput");
+let submitBtn = document.getElementById("submitBtn");
+let resetBtn = document.getElementById("resetBtn");
+let result = document.getElementById("result");
+let ResetDiv = document.getElementById("Reset-Div");
+
+let options = {
+    method: "GET"
+};
+
+let count = 0;
+let uniqueId = null;
+
+function fetchAndDisplayQuote(jsondata) {
+    let URL = "https://apis.ccbp.in/random-quote";
+    fetch(URL, options)
+        .then(function(response) {
+            spinner.classList.remove("d-none");
+            ResetDiv.classList.add("d-none");
+            return response.json();
+        })
+        .then(function(jsondata) {
+            spinner.classList.add("d-none");
+            ResetDiv.classList.remove("d-none");
+            quoteDisplay.textContent = jsondata.content;
+            quoteInput.value = "";
+            clearInterval(uniqueId);
+            timer.textContent = "0";
+            result.textContent = "";
+            count = 0;
+            uniqueId = null;
+        });
+}
+window.onload = fetchAndDisplayQuote;
+resetBtn.onclick = fetchAndDisplayQuote;
+
+quoteInput.addEventListener("focus", function() {
+    if (uniqueId === null) {
+        uniqueId = setInterval(function() {
+            count++;
+            timer.textContent = count;
+        }, 1000);
+    }
+});
+
+submitBtn.onclick = function() {
+    if (quoteInput.value.trim() === quoteDisplay.textContent.trim()) {
+        clearInterval(uniqueId);
+        result.textContent = "You typed in " + count + " seconds";
+    } else {
+        result.textContent = "You typed incorrect sentence";
+    }
+};
+</script>
+</html>
